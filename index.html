@@ -43,6 +43,7 @@
       color: var(--text);
       line-height: 1.6;
       position: relative;
+      cursor: none;
     }
     #shaderCanvas {
       position: fixed;
@@ -99,7 +100,8 @@
       display: flex;
     }
     .fullscreen-viewer img,
-    .fullscreen-viewer video {
+    .fullscreen-viewer video,
+    .fullscreen-viewer iframe {
       max-width: 90vw;
       max-height: 90vh;
     }
@@ -200,8 +202,8 @@
     }
     .carousel-slider {
       overflow: visible;
-      width: 100%;
-      max-width: 500px;
+      width: 80vw;
+      max-width: 80vw;
       min-height: 350px;
       position: relative;
       perspective: 1000px;
@@ -210,8 +212,8 @@
       position: absolute;
       top: 50%;
       left: 50%;
-      width: 70%;
-      transform: translate(-50%, -50%) scale(0.7);
+      width: 60%;
+      transform: translate(-50%, -50%) scale(0.6);
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -221,19 +223,20 @@
       transition: transform 0.6s ease, opacity 0.6s ease;
     }
     .carousel-slide.active {
+      width: 100%;
       transform: translate(-50%, -50%) scale(1);
       opacity: 1;
       z-index: 3;
       pointer-events: auto;
     }
     .carousel-slide.prev {
-      transform: translate(-130%, -50%) scale(0.8) rotateY(20deg);
+      transform: translate(-130%, -50%) scale(0.7) rotateY(20deg);
       opacity: 1;
       z-index: 2;
       pointer-events: auto;
     }
     .carousel-slide.next {
-      transform: translate(30%, -50%) scale(0.8) rotateY(-20deg);
+      transform: translate(30%, -50%) scale(0.7) rotateY(-20deg);
       opacity: 1;
       z-index: 2;
       pointer-events: auto;
@@ -324,6 +327,10 @@
       width: min(960px, 90%);
       border-radius: 1rem;
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+    }
+    #projects {
+      width: 80vw;
+      min-height: 80vh;
     }
     section h3 {
       font-size: 1.05rem;
@@ -417,9 +424,42 @@
         opacity: 1;
       }
     }
+    #customCursor {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 16px;
+      height: 16px;
+      background: var(--accent);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 10000;
+      transform: translate(-50%, -50%);
+      transition: transform 0.1s;
+    }
+    #customCursor.moving {
+      transform: translate(-50%, -50%) scale(1.5);
+    }
+    #customCursor.idle::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 30px;
+      height: 30px;
+      background: rgba(255, 159, 10, 0.4);
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+      animation: bubble 1s infinite;
+    }
+    @keyframes bubble {
+      from { transform: translate(-50%, -50%) scale(1); opacity: 0.8; }
+      to { transform: translate(-50%, -50%) scale(2); opacity: 0; }
+    }
   </style>
 </head>
 <body>
+  <div id="customCursor"></div>
   <a class="whatsapp-float" href="https://wa.me/5493512382333" target="_blank">📱</a>
   <div id="fullscreen" class="fullscreen-viewer" onclick="hideFullscreen()">
     <button class="fullscreen-arrow left" id="fullscreenPrevBtn">&#8592;</button>
@@ -427,6 +467,7 @@
     <div class="fullscreen-controls" onclick="hideFullscreen(event)">✖</div>
     <img id="fullscreenImg" style="display:none" />
     <video id="fullscreenVideo" controls autoplay loop muted style="display:none"></video>
+    <iframe id="fullscreenFrame" allow="autoplay; encrypted-media" allowfullscreen frameborder="0" style="display:none"></iframe>
     <div class="overlay" id="fullscreenOverlay" style="margin-top:2em; background:rgba(0,0,0,0.6); color:#fff; padding:0.5em 1em; border-radius:8px; text-align:center; position:absolute; bottom:40px; left:50%; transform:translateX(-50%); min-width:200px; max-width:90vw;"></div>
   </div>
   <script>
@@ -478,7 +519,7 @@
     </div>
   </div>
   <!-- Sección Proyectos ahora va antes de Perfil Profesional -->
-  <section style="position:relative;">
+  <section id="projects" style="position:relative;">
     <h3>Proyectos</h3>
     <button class="fullscreen-toggle-btn" id="openFullscreenBtn" title="Ver galería en pantalla completa">⛶</button>
     <div class="carousel-container scanlines">
@@ -911,15 +952,32 @@
   <script>
     // Carousel logic
     const slides = Array.from(document.querySelectorAll(".carousel-slide"));
+    slides.forEach(s => {
+      const ifr = s.querySelector('iframe');
+      if (ifr && !ifr.dataset.src) ifr.dataset.src = ifr.src;
+    });
     let currentSlide = 0;
 
     function updateCarousel() {
-      slides.forEach(s => s.classList.remove("active","prev","next"));
+      slides.forEach((s,idx) => {
+        s.classList.remove("active","prev","next");
+        const vid = s.querySelector('video');
+        if (vid) vid.pause();
+        const ifr = s.querySelector('iframe');
+        if (ifr && ifr.dataset.src) ifr.src = '';
+      });
       const prev = (currentSlide - 1 + slides.length) % slides.length;
       const next = (currentSlide + 1) % slides.length;
       slides[currentSlide].classList.add("active");
       slides[prev].classList.add("prev");
       slides[next].classList.add("next");
+      const activeVideo = slides[currentSlide].querySelector('video');
+      if (activeVideo) activeVideo.play();
+      const activeIframe = slides[currentSlide].querySelector('iframe');
+      if (activeIframe) {
+        if (!activeIframe.dataset.src) activeIframe.dataset.src = activeIframe.src;
+        activeIframe.src = activeIframe.dataset.src;
+      }
     }
 
     function moveSlide(direction) {
@@ -1002,20 +1060,27 @@
       if (!slide) return;
       const img = slide.querySelector('img');
       const video = slide.querySelector('video');
+      const iframe = slide.querySelector('iframe');
       const fullscreenImg = document.getElementById("fullscreenImg");
       const fullscreenVideo = document.getElementById("fullscreenVideo");
+      const fullscreenFrame = document.getElementById("fullscreenFrame");
       const overlay = document.getElementById("fullscreenOverlay");
       // Mostrar imagen o video
+      fullscreenImg.style.display = "none";
+      fullscreenVideo.style.display = "none";
+      fullscreenFrame.style.display = "none";
+      fullscreenImg.src = "";
+      fullscreenVideo.src = "";
+      fullscreenFrame.src = "";
       if (img) {
         fullscreenImg.style.display = "block";
         fullscreenImg.src = img.src;
-        fullscreenVideo.style.display = "none";
-        fullscreenVideo.src = "";
       } else if (video) {
         fullscreenVideo.style.display = "block";
         fullscreenVideo.src = video.src;
-        fullscreenImg.style.display = "none";
-        fullscreenImg.src = "";
+      } else if (iframe) {
+        fullscreenFrame.style.display = "block";
+        fullscreenFrame.src = iframe.src || iframe.dataset.src || '';
       }
       // Mostrar título y descripción
       if (fullscreenData[fullscreenIndex]) {
@@ -1028,8 +1093,15 @@
     function hideFullscreen(event) {
       if (event) event.stopPropagation();
       document.getElementById("fullscreen").classList.remove("active");
-      document.getElementById("fullscreenImg").src = "";
-      document.getElementById("fullscreenVideo").src = "";
+      const imgEl = document.getElementById("fullscreenImg");
+      const vidEl = document.getElementById("fullscreenVideo");
+      const frameEl = document.getElementById("fullscreenFrame");
+      imgEl.src = "";
+      vidEl.src = "";
+      frameEl.src = "";
+      imgEl.style.display = "none";
+      vidEl.style.display = "none";
+      frameEl.style.display = "none";
       document.getElementById("fullscreenOverlay").innerHTML = "";
       fullscreenIndex = null;
     }
@@ -1101,6 +1173,21 @@
       document.getElementById(id).classList.add('active');
       event.target.classList.add('active');
     }
+
+    // Cursor personalizado
+    const cursor = document.getElementById('customCursor');
+    let idle;
+    document.addEventListener('mousemove', e => {
+      cursor.style.left = e.clientX + 'px';
+      cursor.style.top = e.clientY + 'px';
+      cursor.classList.add('moving');
+      cursor.classList.remove('idle');
+      clearTimeout(idle);
+      idle = setTimeout(() => {
+        cursor.classList.remove('moving');
+        cursor.classList.add('idle');
+      }, 500);
+    });
   </script>
 </body>
 </html>
