@@ -210,7 +210,7 @@
       position: absolute;
       top: 50%;
       left: 50%;
-      width: 70%;
+      width: 80%;
       transform: translate(-50%, -50%) scale(0.7);
       display: flex;
       flex-direction: column;
@@ -221,7 +221,7 @@
       transition: transform 0.6s ease, opacity 0.6s ease;
     }
     .carousel-slide.active {
-      transform: translate(-50%, -50%) scale(1);
+      transform: translate(-50%, -50%) scale(1.2);
       opacity: 1;
       z-index: 3;
       pointer-events: auto;
@@ -325,6 +325,10 @@
       border-radius: 1rem;
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
     }
+    #projects {
+      width: 75vw;
+      height: 75vh;
+    }
     section h3 {
       font-size: 1.05rem;
       color: var(--accent);
@@ -417,9 +421,55 @@
         opacity: 1;
       }
     }
+    body {
+      cursor: none;
+    }
+    #customCursor {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 30px;
+      height: 40px;
+      pointer-events: none;
+      transform: translate(-50%, -50%);
+      z-index: 100000;
+    }
+    #customCursor svg {
+      width: 100%;
+      height: 100%;
+      fill: orange;
+    }
+    #customCursor .bubble {
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      width: 6px;
+      height: 6px;
+      background: orange;
+      border-radius: 50%;
+      opacity: 0;
+    }
+    #customCursor.idle .bubble {
+      animation: bubble 1s ease-out infinite;
+    }
+    @keyframes bubble {
+      from {
+        transform: translate(-50%, 0) scale(1);
+        opacity: 0.8;
+      }
+      to {
+        transform: translate(-50%, -20px) scale(0.5);
+        opacity: 0;
+      }
+    }
   </style>
 </head>
-<body>
+  <body>
+  <div id="customCursor"><span class="bubble"></span>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 30 40" fill="none" stroke="black" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M5 3 L5 34 L10 27 L15 38 L17 37 L12 25 L20 26 Z" />
+    </svg>
+  </div>
   <a class="whatsapp-float" href="https://wa.me/5493512382333" target="_blank">📱</a>
   <div id="fullscreen" class="fullscreen-viewer" onclick="hideFullscreen()">
     <button class="fullscreen-arrow left" id="fullscreenPrevBtn">&#8592;</button>
@@ -464,9 +514,20 @@
         }
       }
     }
-    function windowResized() {
-      resizeCanvas(window.innerWidth, window.innerHeight);
-    }
+  function windowResized() {
+    resizeCanvas(window.innerWidth, window.innerHeight);
+  }
+</script>
+  <script>
+    const cursor = document.getElementById('customCursor');
+    let idleTimeout;
+    document.addEventListener('mousemove', e => {
+      cursor.style.top = e.clientY + 'px';
+      cursor.style.left = e.clientX + 'px';
+      cursor.classList.remove('idle');
+      clearTimeout(idleTimeout);
+      idleTimeout = setTimeout(() => cursor.classList.add('idle'), 1000);
+    });
   </script>
   <div id="hero">
     <div id="portrait"></div>
@@ -478,7 +539,7 @@
     </div>
   </div>
   <!-- Sección Proyectos ahora va antes de Perfil Profesional -->
-  <section style="position:relative;">
+  <section id="projects" style="position:relative;">
     <h3>Proyectos</h3>
     <button class="fullscreen-toggle-btn" id="openFullscreenBtn" title="Ver galería en pantalla completa">⛶</button>
     <div class="carousel-container scanlines">
@@ -900,8 +961,25 @@
     const slides = Array.from(document.querySelectorAll(".carousel-slide"));
     let currentSlide = 0;
 
+    const placeholderGif = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==';
+    slides.forEach(slide => {
+      const img = slide.querySelector('img');
+      if (img) img.dataset.src = img.src;
+    });
+
     function updateCarousel() {
-      slides.forEach(s => s.classList.remove("active","prev","next"));
+      slides.forEach((s, idx) => {
+        s.classList.remove("active","prev","next");
+        const img = s.querySelector('img');
+        const video = s.querySelector('video');
+        if (idx === currentSlide) {
+          if (img) img.src = img.dataset.src;
+          if (video) video.play();
+        } else {
+          if (img) img.src = placeholderGif;
+          if (video) { video.pause(); video.currentTime = 0; }
+        }
+      });
       const prev = (currentSlide - 1 + slides.length) % slides.length;
       const next = (currentSlide + 1) % slides.length;
       slides[currentSlide].classList.add("active");
