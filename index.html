@@ -81,6 +81,8 @@
     .carousel-slide img,
     .carousel-slide video,
     .carousel-slide iframe {
+        min-height: 70vh;
+  max-height: 90vh;
     width: 100%;
     height: 70vh;
     object-fit: contain; /* o 'contain' para ver todo sin recorte */
@@ -88,9 +90,13 @@
     cursor: pointer;
     image-rendering: pixelated;
     }
-    .carousel-slide iframe {
-      aspect-ratio: 16/9;
-    }
+.carousel-slide iframe {
+  width: 100%;
+  height: 70vh;
+  aspect-ratio: 16/9;
+  object-fit: cover;
+  border-radius: 12px;
+}
     .fullscreen-viewer {
       display: none;
       position: fixed;
@@ -106,12 +112,28 @@
     .fullscreen-viewer.active {
       display: flex;
     }
-    .fullscreen-viewer img,
-    .fullscreen-viewer video,
+
     .fullscreen-viewer iframe {
-      max-width: 90vw;
-      max-height: 90vh;
+  width: 90vw;
+  height: 50.625vw; /* 16:9 */
+  max-height: 90vh;
+  object-fit: contain;
+}
+
+    .fullscreen-viewer img,
+    .fullscreen-viewer video {
+
+  width: auto;
+  height: auto;
+  max-width: 90vw;
+  max-height: 90vh;
+  object-fit: contain;
+  image-rendering: pixelated;
     }
+    .fullscreen-viewer img {
+  object-fit: contain;
+  image-rendering: pixelated;
+}
     .fullscreen-controls {
       position: absolute;
       top: 20px;
@@ -215,39 +237,43 @@
       position: relative;
       perspective: 1000px;
     }
-    .carousel-slide {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      width: 60%;
-      transform: translate(-50%, -50%) scale(0.6);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      pointer-events: none;
-      opacity: 0;
-      transition: transform 0.6s ease-in-out, opacity 0.6s ease-in-out;
-    }
-    .carousel-slide.active {
-      width: 100%;
-      transform: translate(-50%, -50%) scale(1);
-      opacity: 1;
-      z-index: 3;
-      pointer-events: auto;
-    }
-    .carousel-slide.prev {
-      transform: translate(-70%, -50%) scale(0.8) rotateY(10deg);
-      opacity: 1;
-      z-index: 2;
-      pointer-events: auto;
-    }
-    .carousel-slide.next {
-      transform: translate(-30%, -50%) scale(0.8) rotateY(-10deg);
-      opacity: 1;
-      z-index: 2;
-      pointer-events: auto;
-    }
+.carousel-slide {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 60%;
+  transform: translate3d(-50%, -50%, 0) scale(0.6);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  opacity: 0;
+  transition: transform 0.6s ease-in-out, opacity 0.6s ease-in-out;
+}
+
+.carousel-slide.active {
+  transform: translate3d(-50%, -50%, 0) scale(1) rotateY(0deg);
+  opacity: 1;
+  z-index: 3;
+    pointer-events: auto;
+}
+.carousel-slide.prev,
+.carousel-slide.next {
+  z-index: 2;
+  pointer-events: auto;
+}
+.carousel-slide.prev {
+  transform: translate3d(-120%, -50%, 0) scale(0.75) rotateY(12deg);
+  opacity: 0.8;
+  z-index: 2;
+}
+
+.carousel-slide.next {
+  transform: translate3d(20%, -50%, 0) scale(0.75) rotateY(-12deg);
+  opacity: 0.8;
+  z-index: 2;
+}
     .carousel-slide .overlay {
       margin-top: 1em;
       background: rgba(0, 0, 0, 0.6);
@@ -270,10 +296,10 @@
         width: 90%;
       }
       .carousel-slide.prev {
-        transform: translate(-90%, -50%) scale(0.7) rotateY(10deg);
+        transform: translate3d(-140%, -50%) scale(0.7) rotateY(10deg);
       }
       .carousel-slide.next {
-        transform: translate(-10%, -50%) scale(0.7) rotateY(-10deg);
+        transform: translate3d(-40%, -50%) scale(0.7) rotateY(-10deg);
       }
       .fullscreen-toggle-btn {
         top: 10px;
@@ -1025,6 +1051,7 @@
       {titulo: "Central PC", desc: 'Asset isométrico para Pepecoin <a href="https://kek.space" target="_blank">kek.space</a>'},
       {titulo: "Mushroom ship", desc: "Pixel art 16 colores"},
       {titulo: "No roadmap", desc: "Animación para el proyecto Nouns"},
+      {titulo: "Hatchy Rampage", desc: "Diseño UI/UX"},
       {titulo: "Aliens", desc: "Animación para el proyecto Nouns"},
       {titulo: "Cueva", desc: "Fondo loop para videojuego"},
       {titulo: "Idle&Running", desc: "Diseño de personaje para videojuego de consola Amiga"},
@@ -1088,13 +1115,25 @@
         fullscreenImg.style.display = "block";
         fullscreenImg.src = img.src;
         fullscreenImg.style.imageRendering = 'pixelated';
-        fullscreenImg.onload = () => {
-          if (fullscreenImg.naturalWidth < 300) {
-            fullscreenImg.style.width = (fullscreenImg.naturalWidth * 4) + 'px';
-          } else {
-            fullscreenImg.style.width = '';
-          }
-        };
+fullscreenImg.onload = () => {
+  const w = fullscreenImg.naturalWidth;
+  const h = fullscreenImg.naturalHeight;
+
+  fullscreenImg.style.width = 'auto';
+  fullscreenImg.style.height = 'auto';
+  fullscreenImg.style.maxWidth = '90vw';
+  fullscreenImg.style.maxHeight = '90vh';
+  fullscreenImg.style.transformOrigin = 'center';
+
+  // Escala si es pequeña
+  if (w < 300 && h < 300) {
+    fullscreenImg.style.transform = 'scale(3)';
+  } else if (w < 600 && h < 600) {
+    fullscreenImg.style.transform = 'scale(2)';
+  } else {
+    fullscreenImg.style.transform = 'none';
+  }
+};
       } else if (video) {
         fullscreenVideo.style.display = "block";
         fullscreenVideo.src = video.src;
