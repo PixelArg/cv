@@ -198,50 +198,46 @@
       justify-content: center;
       gap: 32px;
     }
-    .carousel-arrow {
-      background: rgba(0, 0, 0, 0.5);
-      color: #fff;
-      border: none;
-      font-size: 2em;
-      width: 48px;
-      height: 48px;
-      border-radius: 50%;
-      cursor: pointer;
-      z-index: 2;
-      transition: background 0.2s;
-    }
-    .carousel-arrow:hover {
-      background: rgba(0, 0, 0, 0.8);
-    }
     .carousel-slider {
       overflow: hidden;
       width: 100%;
       max-width: 500px;
       min-height: 350px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
       position: relative;
+      perspective: 1000px;
     }
     .carousel-slide {
-      min-width: 100%;
-      box-sizing: border-box;
-      display: none;
+      position: absolute;
+      top: 0;
+      left: 50%;
+      width: 100%;
+      height: 100%;
+      display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      position: absolute;
-      left: 0;
-      top: 0;
-      width: 100%;
-      height: 100%;
-      transition: opacity 0.5s;
+      transform: translateX(-50%) scale(0);
+      opacity: 0;
+      transition: transform 0.6s, opacity 0.6s;
+      pointer-events: none;
     }
-    .carousel-slide.active {
-      display: flex;
-      position: relative;
+    .carousel-slide.current {
+      transform: translateX(-50%) scale(1);
       opacity: 1;
+      z-index: 2;
+      pointer-events: auto;
+    }
+    .carousel-slide.prev {
+      transform: translateX(-150%) scale(0.8);
+      opacity: 0.6;
       z-index: 1;
+      pointer-events: auto;
+    }
+    .carousel-slide.next {
+      transform: translateX(50%) scale(0.8);
+      opacity: 0.6;
+      z-index: 1;
+      pointer-events: auto;
     }
     .carousel-slide .overlay {
       margin-top: 1em;
@@ -268,9 +264,6 @@
       }
       .carousel-container {
         gap: 8px;
-      }
-      .carousel-arrow {
-        margin: 0 4px;
       }
       .fullscreen-arrow {
         width: 40px;
@@ -481,7 +474,6 @@
     <h3>Proyectos</h3>
     <button class="fullscreen-toggle-btn" id="openFullscreenBtn" title="Ver galería en pantalla completa">⛶</button>
     <div class="carousel-container scanlines">
-      <button class="carousel-arrow left" onclick="moveSlide(-1)">&#8592;</button>
       <div class="carousel-slider" id="carouselSlider">
         <!-- Pixel Art -->
         <div class="carousel-slide">
@@ -832,7 +824,6 @@
           </div>
         </div>
       </div>
-      <button class="carousel-arrow right" onclick="moveSlide(1)">&#8594;</button>
     </div>
   </section>
   <section>
@@ -901,21 +892,24 @@
     const slides = Array.from(document.querySelectorAll('.carousel-slide'));
     let currentSlide = 0;
 
-    function showSlide(index) {
+    function updateSlides() {
+      const prevIndex = (currentSlide - 1 + slides.length) % slides.length;
+      const nextIndex = (currentSlide + 1) % slides.length;
       slides.forEach((slide, i) => {
-        slide.classList.toggle('active', i === index);
+        slide.classList.remove('prev', 'next', 'current');
+        if (i === currentSlide) slide.classList.add('current');
+        else if (i === prevIndex) slide.classList.add('prev');
+        else if (i === nextIndex) slide.classList.add('next');
       });
     }
 
     function moveSlide(direction) {
-      currentSlide += direction;
-      if (currentSlide < 0) currentSlide = slides.length - 1;
-      if (currentSlide >= slides.length) currentSlide = 0;
-      showSlide(currentSlide);
+      currentSlide = (currentSlide + direction + slides.length) % slides.length;
+      updateSlides();
     }
 
     // Inicializar
-    showSlide(currentSlide);
+    updateSlides();
 
     // Información de títulos y descripciones para pantalla completa
     const fullscreenData = [
@@ -1021,21 +1015,18 @@
       fullscreenIndex = null;
     }
 
-    // Click en imagen/video del carrusel
-    document.querySelectorAll(".carousel-slide img").forEach((img, idx) => {
-      img.addEventListener("click", () => {
-        fullscreenSlides = Array.from(document.querySelectorAll('.carousel-slide'));
-        fullscreenIndex = idx;
-        showFullscreenSlide(fullscreenIndex);
-        document.getElementById("fullscreen").classList.add("active");
-      });
-    });
-    document.querySelectorAll(".carousel-slide video").forEach((video, idx) => {
-      video.addEventListener("click", () => {
-        fullscreenSlides = Array.from(document.querySelectorAll('.carousel-slide'));
-        fullscreenIndex = idx;
-        showFullscreenSlide(fullscreenIndex);
-        document.getElementById("fullscreen").classList.add("active");
+    // Interacción con las diapositivas
+    slides.forEach((slide, idx) => {
+      slide.addEventListener('click', () => {
+        if (currentSlide !== idx) {
+          currentSlide = idx;
+          updateSlides();
+        } else {
+          fullscreenSlides = slides;
+          fullscreenIndex = idx;
+          showFullscreenSlide(fullscreenIndex);
+          document.getElementById("fullscreen").classList.add("active");
+        }
       });
     });
 
