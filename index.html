@@ -54,6 +54,10 @@
     a {
       color: var(--accent);
       text-decoration: none;
+      cursor: none;
+    }
+    button {
+      cursor: none;
     }
     .tag-box {
       display: flex;
@@ -204,7 +208,7 @@
       overflow: visible;
       width: 80vw;
       max-width: 80vw;
-      min-height: 350px;
+      min-height: 80vh;
       position: relative;
       perspective: 1000px;
     }
@@ -251,6 +255,7 @@
     }
     @media (max-width: 600px) {
       .carousel-slider {
+        min-height: 60vh;
         max-width: 95vw;
       }
       .carousel-slide img,
@@ -329,8 +334,8 @@
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
     }
     #projects {
-      width: 80vw;
-      min-height: 80vh;
+      width: 90vw;
+      min-height: 120vh;
     }
     section h3 {
       font-size: 1.05rem;
@@ -451,6 +456,9 @@
       border-radius: 50%;
       transform: translate(-50%, -50%);
       animation: bubble 1s infinite;
+    }
+    #customCursor.link-hover {
+      background: #ff9f0a;
     }
     @keyframes bubble {
       from { transform: translate(-50%, -50%) scale(1); opacity: 0.8; }
@@ -878,13 +886,6 @@
             <p>Asset en 3d con textura pixel art</p>
           </div>
         </div>
-        <div class="carousel-slide">
-          <video autoplay loop muted playsinline src="img/pocketpixel.mp4"></video>
-          <div class="overlay">
-            <h4>PocketPixels</h4>
-            <p>Animaciones generativas de batallas pokemon minimalistas con música generativa</p>
-          </div>
-        </div>
       </div>
     </div>
   </section>
@@ -1037,8 +1038,7 @@
       {titulo: "Mi Amigo Invencible - Todo lo que tengo", desc: "videoclip musical estilo PAM! PAM! animation"},
       {titulo: "Vending machine", desc: "Asset en 3d con textura pixel art"},
       {titulo: "Vending machine", desc: "Asset en 3d con textura pixel art"},
-      {titulo: "Vending machine", desc: "Asset en 3d con textura pixel art"},
-      {titulo: "PocketPixels", desc: "Animaciones generativas de batallas pokemon minimalistas con música generativa"}
+      {titulo: "Vending machine", desc: "Asset en 3d con textura pixel art"}
     ];
 
     // Pantalla completa galería
@@ -1075,6 +1075,14 @@
       if (img) {
         fullscreenImg.style.display = "block";
         fullscreenImg.src = img.src;
+        fullscreenImg.style.imageRendering = 'pixelated';
+        fullscreenImg.onload = () => {
+          if (fullscreenImg.naturalWidth < 300) {
+            fullscreenImg.style.width = (fullscreenImg.naturalWidth * 4) + 'px';
+          } else {
+            fullscreenImg.style.width = '';
+          }
+        };
       } else if (video) {
         fullscreenVideo.style.display = "block";
         fullscreenVideo.src = video.src;
@@ -1187,6 +1195,10 @@
         cursor.classList.remove('moving');
         cursor.classList.add('idle');
       }, 500);
+    });
+    document.querySelectorAll('a').forEach(link => {
+      link.addEventListener('mouseenter', () => cursor.classList.add('link-hover'));
+      link.addEventListener('mouseleave', () => cursor.classList.remove('link-hover'));
     });
   </script>
 </body>
