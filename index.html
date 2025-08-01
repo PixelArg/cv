@@ -330,7 +330,8 @@
     }
     #projects {
       width: 80vw;
-      min-height: 80vh;
+      min-height: 120vh;
+      padding-top: 5rem;
     }
     section h3 {
       font-size: 1.05rem;
@@ -878,13 +879,6 @@
             <p>Asset en 3d con textura pixel art</p>
           </div>
         </div>
-        <div class="carousel-slide">
-          <video autoplay loop muted playsinline src="img/pocketpixel.mp4"></video>
-          <div class="overlay">
-            <h4>PocketPixels</h4>
-            <p>Animaciones generativas de batallas pokemon minimalistas con música generativa</p>
-          </div>
-        </div>
       </div>
     </div>
   </section>
@@ -1037,8 +1031,7 @@
       {titulo: "Mi Amigo Invencible - Todo lo que tengo", desc: "videoclip musical estilo PAM! PAM! animation"},
       {titulo: "Vending machine", desc: "Asset en 3d con textura pixel art"},
       {titulo: "Vending machine", desc: "Asset en 3d con textura pixel art"},
-      {titulo: "Vending machine", desc: "Asset en 3d con textura pixel art"},
-      {titulo: "PocketPixels", desc: "Animaciones generativas de batallas pokemon minimalistas con música generativa"}
+      {titulo: "Vending machine", desc: "Asset en 3d con textura pixel art"}
     ];
 
     // Pantalla completa galería
@@ -1075,6 +1068,15 @@
       if (img) {
         fullscreenImg.style.display = "block";
         fullscreenImg.src = img.src;
+        fullscreenImg.onload = () => {
+          if (fullscreenImg.naturalWidth < 200 && fullscreenImg.naturalHeight < 200) {
+            fullscreenImg.style.maxWidth = 'none';
+            fullscreenImg.style.width = fullscreenImg.naturalWidth * 4 + 'px';
+          } else {
+            fullscreenImg.style.maxWidth = '90vw';
+            fullscreenImg.style.width = '';
+          }
+        };
       } else if (video) {
         fullscreenVideo.style.display = "block";
         fullscreenVideo.src = video.src;
@@ -1187,6 +1189,15 @@
         cursor.classList.remove('moving');
         cursor.classList.add('idle');
       }, 500);
+    });
+
+    document.querySelectorAll('a').forEach(link => {
+      link.addEventListener('mouseenter', () => {
+        cursor.style.background = 'orange';
+      });
+      link.addEventListener('mouseleave', () => {
+        cursor.style.background = '';
+      });
     });
   </script>
 </body>
