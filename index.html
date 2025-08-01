@@ -221,7 +221,7 @@
       transition: transform 0.6s ease, opacity 0.6s ease;
     }
     .carousel-slide.active {
-      transform: translate(-50%, -50%) scale(1.2);
+      transform: translate(-50%, -50%) scale(1);
       opacity: 1;
       z-index: 3;
       pointer-events: auto;
@@ -325,10 +325,6 @@
       border-radius: 1rem;
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
     }
-    #projects {
-      width: 75vw;
-      min-height: 75vh;
-    }
     section h3 {
       font-size: 1.05rem;
       color: var(--accent);
@@ -421,54 +417,9 @@
         opacity: 1;
       }
     }
-
-    /* Custom cursor and bubbles */
-    body { cursor: none; }
-    #custom-cursor {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 30px;
-      height: 40px;
-      transform: translate(-50%, -50%);
-      pointer-events: none;
-      z-index: 10000;
-    }
-    #custom-cursor svg {
-      width: 100%;
-      height: 100%;
-      fill: var(--accent);
-      stroke: black;
-      stroke-width: 2.5;
-      stroke-linecap: round;
-      stroke-linejoin: round;
-      transition: transform 0.1s;
-    }
-    body.cursor-moving #custom-cursor svg {
-      transform: scale(1.2);
-    }
-    .bubble {
-      position: fixed;
-      width: 6px;
-      height: 6px;
-      background: var(--accent);
-      border-radius: 50%;
-      pointer-events: none;
-      animation: bubble 1s forwards ease-out;
-      z-index: 9999;
-    }
-    @keyframes bubble {
-      from { opacity: 1; transform: translate(-50%, -50%) scale(1); }
-      to { opacity: 0; transform: translate(-50%, -80px) scale(0.5); }
-    }
   </style>
 </head>
 <body>
-  <div id="custom-cursor">
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 30 40">
-      <path d="M5 3 L5 34 L10 27 L15 38 L17 37 L12 25 L20 26 Z" />
-    </svg>
-  </div>
   <a class="whatsapp-float" href="https://wa.me/5493512382333" target="_blank">📱</a>
   <div id="fullscreen" class="fullscreen-viewer" onclick="hideFullscreen()">
     <button class="fullscreen-arrow left" id="fullscreenPrevBtn">&#8592;</button>
@@ -527,7 +478,7 @@
     </div>
   </div>
   <!-- Sección Proyectos ahora va antes de Perfil Profesional -->
-  <section id="projects" style="position:relative;">
+  <section style="position:relative;">
     <h3>Proyectos</h3>
     <button class="fullscreen-toggle-btn" id="openFullscreenBtn" title="Ver galería en pantalla completa">⛶</button>
     <div class="carousel-container scanlines">
@@ -949,43 +900,14 @@
     const slides = Array.from(document.querySelectorAll(".carousel-slide"));
     let currentSlide = 0;
 
-  function updateCarousel() {
-    slides.forEach((s, idx) => {
-      s.classList.remove("active", "prev", "next");
-      const v = s.querySelector('video');
-      if (v) v.pause();
-      const img = s.querySelector('img');
-      if (img) pauseGif(img);
-    });
-    const prev = (currentSlide - 1 + slides.length) % slides.length;
-    const next = (currentSlide + 1) % slides.length;
-    slides[currentSlide].classList.add("active");
-    const activeVid = slides[currentSlide].querySelector('video');
-    if (activeVid) activeVid.play();
-    const activeImg = slides[currentSlide].querySelector('img');
-    if (activeImg) resumeGif(activeImg);
-    slides[prev].classList.add("prev");
-    slides[next].classList.add("next");
-  }
-
-  function pauseGif(img) {
-    if (img.dataset.pausedSrc) return;
-    const c = document.createElement('canvas');
-    c.width = img.naturalWidth;
-    c.height = img.naturalHeight;
-    const ctx = c.getContext('2d');
-    ctx.drawImage(img, 0, 0, c.width, c.height);
-    img.dataset.pausedSrc = img.src;
-    img.dataset.frame = c.toDataURL('image/gif');
-    img.src = img.dataset.frame;
-  }
-
-  function resumeGif(img) {
-    if (!img.dataset.pausedSrc) return;
-    img.src = img.dataset.pausedSrc;
-    delete img.dataset.pausedSrc;
-    delete img.dataset.frame;
-  }
+    function updateCarousel() {
+      slides.forEach(s => s.classList.remove("active","prev","next"));
+      const prev = (currentSlide - 1 + slides.length) % slides.length;
+      const next = (currentSlide + 1) % slides.length;
+      slides[currentSlide].classList.add("active");
+      slides[prev].classList.add("prev");
+      slides[next].classList.add("next");
+    }
 
     function moveSlide(direction) {
       currentSlide = (currentSlide + direction + slides.length) % slides.length;
@@ -1159,47 +1081,12 @@
     });
 
     // Galerías tabuladas (por si se usan)
-  function showGallery(id) {
-    document.querySelectorAll('.gallery-section').forEach(s => s.classList.remove('active'));
-    document.querySelectorAll('.tabbed-gallery button').forEach(b => b.classList.remove('active'));
-    document.getElementById(id).classList.add('active');
-    event.target.classList.add('active');
-  }
-
-  // Custom cursor behaviour
-  const cursorEl = document.getElementById('custom-cursor');
-  let bubbleTimer = null;
-  let bubbleInterval = null;
-  let moveTimeout = null;
-
-  document.addEventListener('mousemove', (e) => {
-    cursorEl.style.left = e.clientX + 'px';
-    cursorEl.style.top = e.clientY + 'px';
-
-    document.body.classList.add('cursor-moving');
-    clearTimeout(moveTimeout);
-    moveTimeout = setTimeout(() => {
-      document.body.classList.remove('cursor-moving');
-    }, 100);
-
-    clearTimeout(bubbleTimer);
-    if (bubbleInterval) {
-      clearInterval(bubbleInterval);
-      bubbleInterval = null;
+    function showGallery(id) {
+      document.querySelectorAll('.gallery-section').forEach(s => s.classList.remove('active'));
+      document.querySelectorAll('.tabbed-gallery button').forEach(b => b.classList.remove('active'));
+      document.getElementById(id).classList.add('active');
+      event.target.classList.add('active');
     }
-    bubbleTimer = setTimeout(() => {
-      bubbleInterval = setInterval(createBubble, 200);
-    }, 800);
-  });
-
-  function createBubble() {
-    const b = document.createElement('div');
-    b.className = 'bubble';
-    b.style.left = cursorEl.style.left;
-    b.style.top = cursorEl.style.top;
-    document.body.appendChild(b);
-    setTimeout(() => b.remove(), 1000);
-  }
   </script>
 </body>
 </html>
