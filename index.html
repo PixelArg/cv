@@ -43,7 +43,7 @@
       color: var(--text);
       line-height: 1.6;
       position: relative;
-      cursor: none;
+
     }
     #shaderCanvas {
       position: fixed;
@@ -54,10 +54,26 @@
     a {
       color: var(--accent);
       text-decoration: none;
-      cursor: none;
+
     }
+.tooltip {
+  position: fixed;
+  background: var(--accent);
+  color: #000;
+  padding: 0.4em 0.8em;
+  border-radius: 0.5em;
+  font-size: 0.9rem;
+  font-weight: 600;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s ease;
+  z-index: 10001;
+}
+.tooltip.show {
+  opacity: 1;
+}
+
     button {
-      cursor: none;
     }
     .tag-box {
       display: flex;
@@ -236,7 +252,6 @@
       min-height: 80vh;
       position: relative;
       perspective: 1000px;
-      touch-action: pan-y;
     }
 .carousel-slide {
   position: absolute;
@@ -367,10 +382,7 @@
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
     }
     #projects {
-      width: 100%;
-      max-width: none;
-      margin: 0;
-      border-radius: 0;
+      width: 90vw;
     }
     section h3 {
       font-size: 1.05rem;
@@ -464,20 +476,7 @@
         opacity: 1;
       }
     }
-    #customCursor {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 24px;
-      height: 24px;
-      background: white;
-      border-radius: 50%;
-      pointer-events: none;
-      z-index: 9999;
-      transform: translate(-50%, -50%);
-      transition: transform 0.1s, background 0.2s;
-      mix-blend-mode: difference;
-    }
+    
   </style>
 </head>
 <body>
@@ -532,9 +531,9 @@
     }
   </script>
   <div id="hero">
-    <img id="portrait" src="portrait1.png" alt="portrait" />
+    <img id="portrait" src="img/portrait1.png" alt="portrait" />
     <h1>Agustín Azar</h1>
-    <h2>Ilustrador 2D especializado en arte isométrico</h2>
+    <h2>Ilustrador / Artista digital - Diseñador interactivo - Pixelartista</h2>
     <div id="contact">
       📍 Córdoba, Argentina | 📧 agustinazar4@gmail.com | 🌐 <a href="https://pixelartistas.com/cyberhens"
         target="_blank">pixelartistas.com/cyberhens</a> | 📱 +54 9 351 238 2333
@@ -542,7 +541,7 @@
   </div>
   <!-- Sección Proyectos ahora va antes de Perfil Profesional -->
   <section id="projects" style="position:relative;">
-    <h3>Proyectos</h3>
+    <h3>Portfolio</h3>
     <button class="fullscreen-toggle-btn" id="openFullscreenBtn" title="Ver galería en pantalla completa">⛶</button>
     <div class="carousel-container scanlines">
       <div class="carousel-slider" id="carouselSlider">
@@ -603,7 +602,7 @@
           </div>
         </div>
         <div class="carousel-slide">
-          <img src="img/asddd.gif" alt="Knight Toaddy">
+          <img src="img/pepe.gif" alt="Knight Toaddy">
           <div class="overlay">
             <h4>Knight Toaddy</h4>
             <p>Demo jugable para el proyecto Nouns</p>
@@ -844,60 +843,16 @@
           </div>
         </div>
         <div class="carousel-slide">
-          <img src="img/perro fondo acuarelas.png" alt="Perro en acuarelas">
+          <img src="img/kw.jpg" alt="Kwuanthapyo">
           <div class="overlay">
-            <h4>Perro en acuarelas</h4>
-            <p>para el proyecto trotamunda</p>
+            <h4>Kwuanthapyo</h4>
+            <p>Diseño de personaje</p>
           </div>
-        </div>
-        <div class="carousel-slide">
-          <img src="img/lobo fondo acuarelas.png" alt="Lobo en acuarelas">
-          <div class="overlay">
-            <h4>Lobo en acuarelas</h4>
-            <p>para el proyecto trotamunda</p>
-          </div>
-        </div>
-        <div class="carousel-slide">
-          <img src="img/raton fondo acuarelas.png" alt="Raton en acuarelas">
-          <div class="overlay">
-            <h4>Raton en acuarelas</h4>
-            <p>para el proyecto trotamunda</p>
-          </div>
-        </div>
-        <div class="carousel-slide">
+        </div>        <div class="carousel-slide">
           <img src="img/artifact.png" alt="Psytruvio">
           <div class="overlay">
             <h4>Psytruvio</h4>
             <p>Hombre de vitruvio versión psicodélica</p>
-          </div>
-        </div>
-        <!-- Video -->
-        <div class="carousel-slide">
-          <video autoplay loop muted playsinline src="img/video.mp4"></video>
-          <div class="overlay">
-            <h4>Mi Amigo Invencible - Todo lo que tengo</h4>
-            <p>videoclip musical estilo PAM! PAM! animation</p>
-          </div>
-        </div>
-        <div class="carousel-slide">
-          <video autoplay loop muted playsinline src="img/Caja_A1.mp4"></video>
-          <div class="overlay">
-            <h4>Vending machine</h4>
-            <p>Asset en 3d con textura pixel art</p>
-          </div>
-        </div>
-        <div class="carousel-slide">
-          <video autoplay loop muted playsinline src="img/Ac3.mp4"></video>
-          <div class="overlay">
-            <h4>Vending machine</h4>
-            <p>Asset en 3d con textura pixel art</p>
-          </div>
-        </div>
-        <div class="carousel-slide">
-          <video autoplay loop muted playsinline src="img/c3vidrio-png 4.mp4"></video>
-          <div class="overlay">
-            <h4>Vending machine</h4>
-            <p>Asset en 3d con textura pixel art</p>
           </div>
         </div>
       </div>
@@ -905,7 +860,7 @@
   </section>
   <section>
     <h3>Perfil Profesional</h3>
-    <p>Diseñador interactivo, Ilustrador/pixel artista con más de 15 años de experiencia en proyectos digitales...</p>
+    <p>Diseñador interactivo, Ilustrador / Pixelartista con más de 15 años de experiencia en proyectos digitales</p>
   </section>
   <section>
     <h3>Experiencia Destacada</h3>
@@ -919,7 +874,7 @@
   <section>
     <h3>Formación Académica e Idiomas</h3>
     <ul>
-      <li><strong>Epet N°4 Escuela Técnica</strong> (dibujo técnico, perspectiva isométrica) (2007–2012)</li>
+      <li><strong>Epet N°4 Escuela Técnica</strong> - Dibujo técnico, Perspectiva isométrica (2007–2012)</li>
       <li><strong>Tecnicatura en Diseño Interactivo</strong> – La Metro (2012–2016)</li>
       <li><strong>Licenciatura en Psicología</strong> (en curso) – UNC</li>
       <li><strong>Idiomas:</strong> Español (nativo), Inglés (avanzado), Portugués (intermedio)</li>
@@ -938,7 +893,6 @@
       <span class="tag blue">🖼️ NFTs</span>
       <span class="tag blue">🎮 Videojuegos</span>
       <span class="tag blue">📱 Diseño de UI/UX</span>
-      <span class="tag blue">🌐 Realidad Virtual</span>
       <span class="tag blue">🧊 Modelado 3D</span>
       <span class="tag blue">🗂️ Gestión de Proyectos</span>
       <span class="tag blue">🔳 Diseño Vectorial</span>
@@ -1055,14 +1009,8 @@
       {titulo: "Pamilo!", desc: "Animación para videoclip musical"},
       {titulo: "Fauna exótica", desc: "Dibujo digital"},
       {titulo: "Gato en acuarelas", desc: "para el proyecto trotamunda"},
-      {titulo: "Perro en acuarelas", desc: "para el proyecto trotamunda"},
-      {titulo: "Lobo en acuarelas", desc: "para el proyecto trotamunda"},
-      {titulo: "Raton en acuarelas", desc: "para el proyecto trotamunda"},
-      {titulo: "Psytruvio", desc: "Hombre de vitruvio versión psicodélica"},
-      {titulo: "Mi Amigo Invencible - Todo lo que tengo", desc: "videoclip musical estilo PAM! PAM! animation"},
-      {titulo: "Vending machine", desc: "Asset en 3d con textura pixel art"},
-      {titulo: "Vending machine", desc: "Asset en 3d con textura pixel art"},
-      {titulo: "Vending machine", desc: "Asset en 3d con textura pixel art"}
+      {titulo: "Kwuanthapyo", desc: "Diseño de personaje"},
+      {titulo: "Psytruvio", desc: "Hombre de vitruvio versión psicodélica"}
     ];
 
     // Pantalla completa galería
@@ -1203,32 +1151,6 @@ fullscreenImg.onload = () => {
       }
     });
 
-    // Navegación por arrastre / swipe en carrusel
-    const sliderEl = document.getElementById('carouselSlider');
-    let startX = 0;
-    let isDragging = false;
-
-    sliderEl.addEventListener('pointerdown', e => {
-      startX = e.clientX;
-      isDragging = true;
-    });
-
-    function endDrag(e) {
-      if (!isDragging) return;
-      const diff = e.clientX - startX;
-      if (Math.abs(diff) > 50) {
-        moveSlide(diff > 0 ? -1 : 1);
-      }
-      isDragging = false;
-    }
-
-    sliderEl.addEventListener('pointermove', e => {
-      if (isDragging) e.preventDefault();
-    });
-    sliderEl.addEventListener('pointerup', endDrag);
-    sliderEl.addEventListener('pointerleave', () => { isDragging = false; });
-    sliderEl.addEventListener('pointercancel', () => { isDragging = false; });
-
     // Evitar que el click en controles de pantalla completa cierre el modal
     document.querySelectorAll('.fullscreen-controls, .fullscreen-arrow').forEach(btn => {
       btn.addEventListener('click', function(e) {
@@ -1248,44 +1170,77 @@ fullscreenImg.onload = () => {
     const portrait = document.getElementById('portrait');
     const cursor = document.getElementById('customCursor');
 
-    document.addEventListener('mousemove', e => {
-      cursor.style.transform = `translate(${e.clientX - 12}px, ${e.clientY - 12}px)`;
+document.addEventListener('mousemove', e => {
+  cursor.style.transform = `translate(${e.clientX - 12}px, ${e.clientY - 12}px)`;
 
-      const rect = portrait.getBoundingClientRect();
-      const centerX = rect.left + rect.width / 2;
-      const centerY = rect.top + rect.height / 2;
-      const dx = e.clientX - centerX;
-      const dy = e.clientY - centerY;
-      const angle = Math.atan2(dy, dx) * (180 / Math.PI);
+  const rect = portrait.getBoundingClientRect();
+  const centerX = rect.left + rect.width / 2;
+  const centerY = rect.top + rect.height / 2;
+  const dx = e.clientX - centerX;
+  const dy = e.clientY - centerY;
+  const angle = Math.atan2(dy, dx) * (180 / Math.PI);
 
-      let frame = 1;
-      if (rect.contains(e.clientX, e.clientY)) {
-        frame = 1;
-      } else if (angle >= -22.5 && angle < 22.5) {
-        frame = 5;
-      } else if (angle >= 22.5 && angle < 67.5) {
-        frame = 6;
-      } else if (angle >= 67.5 && angle < 112.5) {
-        frame = 7;
-      } else if (angle >= 112.5 && angle < 157.5) {
-        frame = 3;
-      } else if (angle >= 157.5 || angle < -157.5) {
-        frame = 2;
-      } else if (angle >= -67.5 && angle < -22.5) {
-        frame = 4;
-      }
+  let frame;
 
-      portrait.src = `portrait${frame}.png`;
+  const isInsidePortrait =
+    e.clientX >= rect.left &&
+    e.clientX <= rect.right &&
+    e.clientY >= rect.top &&
+    e.clientY <= rect.bottom;
+
+  if (isInsidePortrait) {
+    frame = 1; // Solo si el cursor está encima
+  } else if (angle >= -22.5 && angle < 22.5) {
+    frame = 5;
+  } else if (angle >= 22.5 && angle < 67.5) {
+    frame = 6;
+  } else if (angle >= 67.5 && angle < 112.5) {
+    frame = 7; // Antes era 7, se mantiene
+  } else if (angle >= 112.5 && angle < 157.5) {
+    frame = 7; // Antes era 3, lo cambiás por 7
+  } else if (angle >= 157.5 || angle < -157.5) {
+    frame = 2;
+  } else if (angle >= -67.5 && angle < -22.5) {
+    frame = 4;
+  } else {
+    frame = 3; // Zona neutra o fallback general
+  }
+
+
+
+      portrait.src = `img/portrait${frame}.png`;
     });
+function showTooltip(id, x, y, delay = 1000) {
+  const el = document.getElementById(id);
+  el.style.left = `${x}px`;
+  el.style.top = `${y}px`;
+  el.classList.add("show");
 
-    document.querySelectorAll('a').forEach(link => {
-      link.addEventListener('mouseenter', () => {
-        cursor.style.background = 'orange';
-      });
-      link.addEventListener('mouseleave', () => {
-        cursor.style.background = 'white';
-      });
-    });
+  setTimeout(() => {
+    el.classList.remove("show");
+  }, delay);
+}
+
+window.addEventListener("load", () => {
+  const carousel = document.getElementById("carouselSlider");
+  if (carousel) {
+    const rect = carousel.getBoundingClientRect();
+    showTooltip("tip-arrows", rect.left + 30, rect.top - 40, 3000); // Dura más
+  }
+
+  // Esperamos a que termine la anterior
+  setTimeout(() => {
+    const fullscreenBtn = document.getElementById("openFullscreenBtn");
+    if (fullscreenBtn) {
+      const rect = fullscreenBtn.getBoundingClientRect();
+      const offsetX = -130; // hacia la izquierda
+      showTooltip("tip-fullscreen", rect.left + offsetX, rect.top);
+    }
+  }, 3000 + 200); // espera lo que dura la anterior + un pequeño espacio
+});
+
   </script>
+  <div id="tip-fullscreen" class="tooltip">Pantalla completa</div>
+<div id="tip-arrows" class="tooltip">Desplazarse con las flechas del teclado</div>
 </body>
 </html>
