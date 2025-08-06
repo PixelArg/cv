@@ -236,6 +236,7 @@
       min-height: 80vh;
       position: relative;
       perspective: 1000px;
+      touch-action: pan-y;
     }
 .carousel-slide {
   position: absolute;
@@ -366,7 +367,10 @@
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
     }
     #projects {
-      width: 90vw;
+      width: 100%;
+      max-width: none;
+      margin: 0;
+      border-radius: 0;
     }
     section h3 {
       font-size: 1.05rem;
@@ -1198,6 +1202,32 @@ fullscreenImg.onload = () => {
         if (e.key === 'ArrowRight') moveSlide(1);
       }
     });
+
+    // Navegación por arrastre / swipe en carrusel
+    const sliderEl = document.getElementById('carouselSlider');
+    let startX = 0;
+    let isDragging = false;
+
+    sliderEl.addEventListener('pointerdown', e => {
+      startX = e.clientX;
+      isDragging = true;
+    });
+
+    function endDrag(e) {
+      if (!isDragging) return;
+      const diff = e.clientX - startX;
+      if (Math.abs(diff) > 50) {
+        moveSlide(diff > 0 ? -1 : 1);
+      }
+      isDragging = false;
+    }
+
+    sliderEl.addEventListener('pointermove', e => {
+      if (isDragging) e.preventDefault();
+    });
+    sliderEl.addEventListener('pointerup', endDrag);
+    sliderEl.addEventListener('pointerleave', () => { isDragging = false; });
+    sliderEl.addEventListener('pointercancel', () => { isDragging = false; });
 
     // Evitar que el click en controles de pantalla completa cierre el modal
     document.querySelectorAll('.fullscreen-controls, .fullscreen-arrow').forEach(btn => {
