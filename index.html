@@ -366,7 +366,7 @@
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
     }
     #projects {
-      width: 90vw;
+      width: 100%;
     }
     section h3 {
       font-size: 1.05rem;
@@ -1008,6 +1008,40 @@
     updateCarousel();
 
 
+    // Swipe/drag support for carousel
+    const slider = document.getElementById('carouselSlider');
+    let startX = 0;
+    let isDown = false;
+    let isDragging = false;
+
+    slider.addEventListener('pointerdown', e => {
+      isDown = true;
+      startX = e.clientX;
+      isDragging = false;
+    });
+
+    slider.addEventListener('pointermove', e => {
+      if (!isDown) return;
+      const diff = e.clientX - startX;
+      if (Math.abs(diff) > 10) {
+        isDragging = true;
+      }
+    });
+
+    slider.addEventListener('pointerup', e => {
+      if (!isDown) return;
+      const diff = e.clientX - startX;
+      if (isDragging && Math.abs(diff) > 50) {
+        moveSlide(diff > 0 ? -1 : 1);
+      }
+      isDown = false;
+    });
+
+    slider.addEventListener('pointerleave', () => {
+      isDown = false;
+    });
+
+
     // Información de títulos y descripciones para pantalla completa
     const fullscreenData = [
       {titulo: "Pepecoin - Kekspace", desc: "Videojuego en pixel art isométrico para Pepecoin"},
@@ -1149,6 +1183,10 @@ fullscreenImg.onload = () => {
     // Click en slides
     slides.forEach((slide, idx) => {
       slide.addEventListener("click", () => {
+        if (isDragging) {
+          isDragging = false;
+          return;
+        }
         if (slide.classList.contains("active")) {
           fullscreenSlides = slides;
           fullscreenIndex = idx;
